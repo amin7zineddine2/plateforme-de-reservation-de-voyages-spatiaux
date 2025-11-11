@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Journey - SpaceVoyager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'space-dark': '#0a0a18',
+                        'space-blue': '#1a1a2e',
+                        'space-purple': '#16213e',
+                        'neon-blue': '#0ea5e9',
+                        'neon-purple': '#8b5cf6',
+                        'neon-cyan': '#06b6d4',
+                    },
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'sans-serif'],
+                        'exo': ['Exo 2', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #0a0a18, #1a1a2e, #16213e);
+            background-attachment: fixed;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        .glow {
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
+        }
+        
+        .text-glow {
+            text-shadow: 0 0 10px rgba(14, 165, 233, 0.7);
+        }
+        
+        .booking-card {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 15px;
+        }
+        
+        .form-input {
+            background: rgba(22, 33, 62, 0.5);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 8px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: rgba(14, 165, 233, 0.7);
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
+            outline: none;
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, #0ea5e9, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #0ea5e9, #8b5cf6);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(14, 165, 233, 0.4);
+        }
+        
+        .passenger-section {
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="text-white font-exo min-h-screen">
+    <!-- Stars Background -->
+    <div id="stars-container"></div>
+    
+    <!-- Navigation -->
+    <nav class="bg-space-dark/80 backdrop-blur-md border-b border-neon-blue/20 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center glow">
+                    <i class="fas fa-rocket text-white"></i>
+                </div>
+                <a href="index.html" class="font-orbitron text-xl font-bold text-glow">SpaceVoyager</a>
+            </div>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="nav-link hover:text-neon-blue transition-colors">Home</a>
+                <a href="destinations.html" class="nav-link hover:text-neon-blue transition-colors">Destinations</a>
+                <a href="booking.html" class="nav-link hover:text-neon-blue transition-colors text-neon-blue">Booking</a>
+                <a href="about.html" class="nav-link hover:text-neon-blue transition-colors">About</a>
+                <a href="login.html" class="nav-link hover:text-neon-blue transition-colors">Login</a>
+            </div>
+            
+            <div class="md:hidden">
+                <button class="text-white focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 relative z-10">
+        <!-- Page Header -->
+        <section class="py-8 text-center">
+            <h1 class="font-orbitron text-4xl md:text-5xl font-bold mb-4 text-glow">Book Your Space Journey</h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                Complete the form below to reserve your place on an unforgettable space adventure.
+            </p>
+        </section>
+
+        <!-- Booking Form -->
+        <section class="max-w-4xl mx-auto">
+            <div class="booking-card p-6 md:p-8">
+                <form id="booking-form" class="space-y-6">
+                    <!-- Trip Details Section -->
+                    <div>
+                        <h2 class="font-orbitron text-2xl mb-4 text-glow">Trip Details</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-300 mb-2">Destination</label>
+                                <select id="destination" name="destination" class="form-input w-full px-4 py-3" required>
+                                    <option value="">Select a destination</option>
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Travel Package</label>
+                                <select id="package" name="package" class="form-input w-full px-4 py-3" required>
+                                    <option value="">Select a package</option>
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Departure Date</label>
+                                <input type="date" id="departure-date" name="departureDate" class="form-input w-full px-4 py-3" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Number of Passengers</label>
+                                <select id="passenger-count" name="passengerCount" class="form-input w-full px-4 py-3" required>
+                                    <option value="1">1 Passenger</option>
+                                    <option value="2">2 Passengers</option>
+                                    <option value="3">3 Passengers</option>
+                                    <option value="4">4 Passengers</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passengers Section -->
+                    <div id="passengers-section">
+                        <h2 class="font-orbitron text-2xl mb-4 text-glow">Passenger Information</h2>
+                        <div id="passengers-container">
+                            <!-- Passenger fields will be dynamically added here -->
+                        </div>
+                    </div>
+
+                    <!-- Accommodation Section -->
+                    <div>
+                        <h2 class="font-orbitron text-2xl mb-4 text-glow">Accommodation</h2>
+                        <div id="accommodation-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Accommodation options will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Extras Section -->
+                    <div>
+                        <h2 class="font-orbitron text-2xl mb-4 text-glow">Additional Extras</h2>
+                        <div class="space-y-3">
+                            <label class="flex items-center space-x-3">
+                                <input type="checkbox" name="spaceInsurance" value="5000" class="form-checkbox text-neon-blue">
+                                <span class="text-gray-300">Space Travel Insurance (+$5,000)</span>
+                            </label>
+                            <label class="flex items-center space-x-3">
+                                <input type="checkbox" name="photoPackage" value="2000" class="form-checkbox text-neon-blue">
+                                <span class="text-gray-300">Professional Photo Package (+$2,000)</span>
+                            </label>
+                            <label class="flex items-center space-x-3">
+                                <input type="checkbox" name="trainingProgram" value="3000" class="form-checkbox text-neon-blue">
+                                <span class="text-gray-300">Advanced Training Program (+$3,000)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Price Summary -->
+                    <div class="bg-space-purple/50 p-6 rounded-lg">
+                        <h2 class="font-orbitron text-2xl mb-4 text-glow">Price Summary</h2>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Base Price:</span>
+                                <span id="base-price" class="text-white">$0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Accommodation:</span>
+                                <span id="accommodation-price" class="text-white">$0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Extras:</span>
+                                <span id="extras-price" class="text-white">$0</span>
+                            </div>
+                            <div class="border-t border-neon-blue/20 pt-2 mt-2">
+                                <div class="flex justify-between text-xl font-bold">
+                                    <span class="text-glow">Total:</span>
+                                    <span id="total-price" class="text-glow">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button type="submit" class="btn-primary text-white px-8 py-4 rounded-lg font-bold text-lg glow w-full md:w-auto">
+                            Complete Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-space-dark border-t border-neon-blue/20 py-8 mt-12 relative z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center">
+                            <i class="fas fa-rocket text-white text-sm"></i>
+                        </div>
+                        <span class="font-orbitron text-lg">SpaceVoyager</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">© 2023 SpaceVoyager. All rights reserved.</p>
+                </div>
+                
+                <div class="flex space-x-6 mb-4 md:mb-0">
+                    <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create stars background
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const starCount = 150;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                container.appendChild(star);
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            
+            // Load destinations data
+            loadDestinations();
+            
+            // Setup passenger form
+            setupPassengerForm();
+            
+            // Setup form event listeners
+            setupFormListeners();
+        });
+
+        // Load destinations from JSON
+        async function loadDestinations() {
+            try {
+                const response = await fetch('destinations-690cfdd3ca0ba304555187.json');
+                const data = await response.json();
+                populateDestinations(data.destinations);
+            } catch (error) {
+                console.error('Error loading destinations:', error);
+            }
+        }
+
+        // Populate destinations dropdown
+        function populateDestinations(destinations) {
+            const select = document.getElementById('destination');
+            destinations.forEach(dest => {
+                const option = document.createElement('option');
+                option.value = dest.id;
+                option.textContent = `${dest.name} - $${dest.price.toLocaleString()}`;
+                option.setAttribute('data-price', dest.price);
+                select.appendChild(option);
+            });
+        }
+
+        // Setup passenger form
+        function setupPassengerForm() {
+            const passengerCount = document.getElementById('passenger-count');
+            const container = document.getElementById('passengers-container');
+            
+            passengerCount.addEventListener('change', function() {
+                const count = parseInt(this.value);
+                container.innerHTML = '';
+                
+                for (let i = 1; i <= count; i++) {
+                    const passengerSection = document.createElement('div');
+                    passengerSection.className = 'passenger-section';
+                    passengerSection.innerHTML = `
+                        <h3 class="font-orbitron text-lg mb-3 text-neon-blue">Passenger ${i}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-300 mb-2">Full Name</label>
+                                <input type="text" name="passengerName${i}" class="form-input w-full px-4 py-3" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Email</label>
+                                <input type="email" name="passengerEmail${i}" class="form-input w-full px-4 py-3" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Phone</label>
+                                <input type="tel" name="passengerPhone${i}" class="form-input w-full px-4 py-3" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 mb-2">Date of Birth</label>
+                                <input type="date" name="passengerDOB${i}" class="form-input w-full px-4 py-3" required>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(passengerSection);
+                }
+            });
+            
+            // Trigger initial render
+            passengerCount.dispatchEvent(new Event('change'));
+        }
+
+        // Setup form event listeners for real-time updates
+        function setupFormListeners() {
+            const form = document.getElementById('booking-form');
+            const inputs = form.querySelectorAll('select, input[type="checkbox"]');
+            
+            inputs.forEach(input => {
+                input.addEventListener('change', updatePrice);
+            });
+            
+            // Initial price update
+            updatePrice();
+        }
+
+        // Update price in real-time
+        function updatePrice() {
+            const destinationSelect = document.getElementById('destination');
+            const passengerCount = document.getElementById('passenger-count');
+            const basePriceEl = document.getElementById('base-price');
+            const accommodationPriceEl = document.getElementById('accommodation-price');
+            const extrasPriceEl = document.getElementById('extras-price');
+            const totalPriceEl = document.getElementById('total-price');
+            
+            let basePrice = 0;
+            let accommodationPrice = 0;
+            let extrasPrice = 0;
+            
+            // Calculate base price
+            if (destinationSelect.value) {
+                basePrice = parseInt(destinationSelect.selectedOptions[0].getAttribute('data-price')) || 0;
+                basePrice *= parseInt(passengerCount.value);
+            }
+            
+            // Calculate extras price
+            const extras = document.querySelectorAll('input[type="checkbox"]:checked');
+            extras.forEach(extra => {
+                extrasPrice += parseInt(extra.value) || 0;
+            });
+            
+            // Calculate total
+            const total = basePrice + accommodationPrice + extrasPrice;
+            
+            // Update display
+            basePriceEl.textContent = `$${basePrice.toLocaleString()}`;
+            accommodationPriceEl.textContent = `$${accommodationPrice.toLocaleString()}`;
+            extrasPriceEl.textContent = `$${extrasPrice.toLocaleString()}`;
+            totalPriceEl.textContent = `$${total.toLocaleString()}`;
+        }
+
+        // Form submission
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Check if user is logged in
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) {
+                if (confirm('You need to be logged in to complete your booking. Would you like to login first?')) {
+                    window.location.href = 'login.html';
+                }
+                return;
+            }
+            
+            // Create booking object
+            const booking = {
+                id: 'BK' + Date.now(),
+                userId: user.id,
+                destination: document.getElementById('destination').value,
+                package: document.getElementById('package').value,
+                departureDate: document.getElementById('departure-date').value,
+                passengerCount: document.getElementById('passenger-count').value,
+                totalPrice: document.getElementById('total-price').textContent.replace('$', '').replace(',', ''),
+                status: 'confirmed',
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save booking to localStorage
+            saveBooking(booking);
+            
+            // Redirect to confirmation
+            alert('Booking confirmed! Redirecting to your bookings...');
+            window.location.href = 'my-bookings.html';
+        });
+
+        // Save booking to localStorage
+        function saveBooking(booking) {
+            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            bookings.push(booking);
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+        }
+        
+        
+        
+
+        
+        // Dans booking.html - Améliorations
+async function loadPackages() {
+    try {
+        const response = await fetch('booking-options-690cfdcdd02a8839253520.json');
+        const data = await response.json();
+        populatePackages(data.packages);
+    } catch (error) {
+        console.error('Error loading packages:', error);
+    }
+}
+
+function populatePackages(packages) {
+    const select = document.getElementById('package');
+    packages.forEach(pkg => {
+        const option = document.createElement('option');
+        option.value = pkg.id;
+        option.textContent = `${pkg.name} - $${pkg.price.toLocaleString()}`;
+        option.setAttribute('data-price', pkg.price);
+        select.appendChild(option);
+    });
+}
+
+// Champs conditionnels
+function setupConditionalFields() {
+    const packageSelect = document.getElementById('package');
+    packageSelect.addEventListener('change', function() {
+        const moonwalkField = document.getElementById('moonwalk-size');
+        if (this.value === 'moonwalk-package') {
+            moonwalkField.style.display = 'block';
+        } else {
+            moonwalkField.style.display = 'none';
+        }
+    });
+}
+
+
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bentogrids Template</title>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Urbanist', sans-serif;
+        }
+        
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #475569;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .discount-card {
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            color: white;
+        }
+        
+        .discount-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        
+        .discount-card p {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 1.5rem 0;
+        }
+        
+        .discount-code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .font-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+        }
+        
+        .font-large {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            line-height: 1;
+        }
+        
+        .font-medium {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        .font-regular {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin: 0.75rem 0;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 2.5rem 0;
+        }
+        
+        .signature {
+            text-align: right;
+            font-weight: 500;
+            font-style: italic;
+            color: #64748b;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.25rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .font-large {
+                font-size: 3rem;
+            }
+            
+            .font-medium {
+                font-size: 1.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+            
+            .font-large {
+                font-size: 2.5rem;
+            }
+            
+            .price {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Bentogrids Template</h1>
+            <h2>Vento grid template</h2>
+        </header>
+        
+        <div class="grid">
+            <div class="card discount-card">
+                <h3>UPCBADET DISCOUNT</h3>
+                <p>Upgrade today to enable unlimited projects.</p>
+                <div class="price">$12.99</div>
+                <div>DISCOUNT CODE</div>
+                <div class="discount-code">CHERFOLKS</div>
+            </div>
+            
+            <div class="card font-card">
+                <h3>Urbanist font</h3>
+                <div class="font-large">Aa</div>
+                <div class="font-medium">Technexus</div>
+                <div class="font-regular">Connecting ideas, Empowering innovation</div>
+                <div class="font-regular">Connecting ideas, Empowering Innovation</div>
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="signature">Ivan Volti</div>
+    </div>
+</body>
+</html>
