@@ -150,12 +150,12 @@
                 <form class="space-y-6">
                     <div>
                         <label class="block text-gray-300 mb-2">Email Address</label>
-                        <input type="email" class="form-input w-full px-4 py-3" placeholder="Enter your email">
+                        <input type="email" class="form-input w-full px-4 py-3" placeholder="Enter your email" id="email">
                     </div>
                     
                     <div>
                         <label class="block text-gray-300 mb-2">Password</label>
-                        <input type="password" class="form-input w-full px-4 py-3" placeholder="Enter your password">
+                        <input type="password" class="form-input w-full px-4 py-3" placeholder="Enter your password" id="password">
                     </div>
                     
                     <div class="flex items-center justify-between">
@@ -174,7 +174,7 @@
                 <div class="mt-6 pt-6 border-t border-neon-blue/20">
                     <p class="text-gray-400 text-center">
                         Don't have an account? 
-                        <a href="#" class="text-neon-blue hover:underline">Sign up now</a>
+                        <a href="#" class="text-neon-blue hover:underline" id="showSignup">Sign up now</a>
                     </p>
                 </div>
             </div>
@@ -266,228 +266,201 @@
             }
         }
         
+        // Fake user database - STRICT CHECK
+        const fakeUsers = [
+            {
+                id: 'user_1',
+                email: 'astro@space.com',
+                password: 'space123',
+                name: 'Astro Navigator',
+                joinDate: '2024-01-15',
+                membership: 'Explorer'
+            },
+            {
+                id: 'user_2', 
+                email: 'nova@voyager.com',
+                password: 'voyager123',
+                name: 'Nova Explorer',
+                joinDate: '2024-02-20',
+                membership: 'Pioneer'
+            },
+            {
+                id: 'user_3',
+                email: 'cosmos@travel.com',
+                password: 'cosmos123',
+                name: 'Cosmos Traveler',
+                joinDate: '2024-03-10',
+                membership: 'Adventurer'
+            },
+            {
+                id: 'user_4',
+                email: 'test@space.com',
+                password: 'test123',
+                name: 'Test User',
+                joinDate: '2024-01-01',
+                membership: 'Explorer'
+            }
+        ];
+
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
+            
+            const loginForm = document.querySelector('form');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // Validate inputs
+                if (!email || !password) {
+                    showMessage('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                // STRICT CHECK: Verify user exists in fake database
+                const user = fakeUsers.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    // User exists and credentials are correct - login successful
+                    const userSession = {
+                        id: user.id,
+                        email: user.email,
+                        name: user.name,
+                        isLoggedIn: true,
+                        joinDate: user.joinDate,
+                        membership: user.membership,
+                        loginTime: new Date().toISOString()
+                    };
+                    
+                    // Save to localStorage
+                    localStorage.setItem('currentUser', JSON.stringify(userSession));
+                    
+                    showMessage(`Welcome back, ${user.name}!`, 'success');
+                    
+                    // Redirect after short delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                    
+                } else {
+                    // STRICT CHECK: Check if email exists but password is wrong
+                    const emailExists = fakeUsers.some(u => u.email === email);
+                    
+                    if (emailExists) {
+                        showMessage('Incorrect password. Please try again.', 'error');
+                    } else {
+                        // Email not found in fake users - STRICT: No automatic account creation
+                        showMessage('Account not found. Please sign up first.', 'error');
+                    }
+                }
+            });
+            
+            // Show signup info when clicked
+            document.getElementById('showSignup').addEventListener('click', function(e) {
+                e.preventDefault();
+                showSignupInfo();
+            });
+            
+            // Check if already logged in
+            checkAuthStatus();
         });
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.querySelector('form');
-    
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
         
-        const email = this.querySelector('input[type="email"]').value;
-        const password = this.querySelector('input[type="password"]').value;
-        
-        // Fake authentication
-        const user = {
-            id: 'user_' + Date.now(),
-            email: email,
-            name: email.split('@')[0],
-            isLoggedIn: true,
-            loginTime: new Date().toISOString()
-        };
-        
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        alert('Login successful!');
-        window.location.href = 'index.html';
-    });
-});
-
-// Ajouter ce script dans login.html
-document.addEventListener('DOMContentLoaded', function() {
-    // Fake user database
-    const fakeUsers = [
-        {
-            id: 'user_1',
-            email: 'astro@space.com',
-            password: 'space123',
-            name: 'Astro Navigator',
-            joinDate: '2024-01-15',
-            membership: 'Explorer'
-        },
-        {
-            id: 'user_2', 
-            email: 'nova@voyager.com',
-            password: 'voyager123',
-            name: 'Nova Explorer',
-            joinDate: '2024-02-20',
-            membership: 'Pioneer'
-        },
-        {
-            id: 'user_3',
-            email: 'cosmos@travel.com',
-            password: 'cosmos123',
-            name: 'Cosmos Traveler',
-            joinDate: '2024-03-10',
-            membership: 'Adventurer'
-        },
-        {
-            id: 'user_4',
-            email: 'test@space.com',
-            password: 'test123',
-            name: 'Test User',
-            joinDate: '2024-01-01',
-            membership: 'Explorer'
+        // Show signup information
+        function showSignupInfo() {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'login-message p-4 rounded-lg mb-4 bg-blue-500/20 text-blue-400 border border-blue-500/30';
+            messageDiv.innerHTML = `
+                <h4 class="font-orbitron mb-2">Available Test Accounts:</h4>
+                <div class="text-sm space-y-1">
+                    <div><strong>astro@space.com</strong> / space123</div>
+                    <div><strong>nova@voyager.com</strong> / voyager123</div>
+                    <div><strong>cosmos@travel.com</strong> / cosmos123</div>
+                    <div><strong>test@space.com</strong> / test123</div>
+                </div>
+                <p class="text-xs mt-2 text-gray-300">Use one of these test accounts to login</p>
+            `;
+            
+            const form = document.querySelector('form');
+            const existingMessage = document.querySelector('.login-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            form.parentNode.insertBefore(messageDiv, form);
         }
-    ];
 
-    const loginForm = document.querySelector('form');
-    
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const email = this.querySelector('input[type="email"]').value;
-        const password = this.querySelector('input[type="password"]').value;
-        
-        // Validate inputs
-        if (!email || !password) {
-            showMessage('Please fill in all fields', 'error');
-            return;
-        }
-        
-        // Check if user exists in fake database
-        const user = fakeUsers.find(u => u.email === email && u.password === password);
-        
-        if (user) {
-            // User exists - login successful
-            const userSession = {
-                id: user.id,
-                email: user.email,
-                name: user.name,
-                isLoggedIn: true,
-                joinDate: user.joinDate,
-                membership: user.membership,
-                loginTime: new Date().toISOString()
-            };
+        // Show message function
+        function showMessage(message, type) {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.login-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
             
-            // Save to localStorage
-            localStorage.setItem('currentUser', JSON.stringify(userSession));
+            // Create new message element
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `login-message p-4 rounded-lg mb-4 text-center ${
+                type === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 
+                'bg-red-500/20 text-red-400 border border-red-500/30'
+            }`;
+            messageDiv.textContent = message;
             
-            showMessage(`Welcome back, ${user.name}!`, 'success');
+            // Insert before the form
+            const form = document.querySelector('form');
+            form.parentNode.insertBefore(messageDiv, form);
             
-            // Redirect after short delay
+            // Auto remove after 5 seconds
             setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
-            
-        } else {
-            // Check if email exists but password is wrong
-            const emailExists = fakeUsers.some(u => u.email === email);
-            
-            if (emailExists) {
-                showMessage('Incorrect password. Please try again.', 'error');
-            } else {
-                // New user - create account automatically
-                const newUser = {
-                    id: 'user_' + Date.now(),
-                    email: email,
-                    password: password,
-                    name: email.split('@')[0],
-                    joinDate: new Date().toISOString().split('T')[0],
-                    membership: 'New Explorer'
-                };
-                
-                const userSession = {
-                    id: newUser.id,
-                    email: newUser.email,
-                    name: newUser.name,
-                    isLoggedIn: true,
-                    joinDate: newUser.joinDate,
-                    membership: newUser.membership,
-                    loginTime: new Date().toISOString()
-                };
-                
-                // Save to localStorage
-                localStorage.setItem('currentUser', JSON.stringify(userSession));
-                
-                showMessage(`Welcome to SpaceVoyager, ${newUser.name}! Your account has been created.`, 'success');
-                
-                // Redirect after short delay
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Check authentication status
+        function checkAuthStatus() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user && user.isLoggedIn) {
+                // Show welcome message and redirect option
+                const loginCard = document.querySelector('.login-card');
+                loginCard.innerHTML = `
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-r from-green-500 to-green-700 flex items-center justify-center mx-auto mb-4 glow">
+                            <i class="fas fa-check text-white text-2xl"></i>
+                        </div>
+                        <h1 class="font-orbitron text-3xl mb-2 text-glow">Already Logged In</h1>
+                        <p class="text-gray-300">Welcome back, ${user.name}!</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-space-purple/50 p-4 rounded-lg text-center">
+                            <p class="text-gray-300 mb-2">You are currently logged in as:</p>
+                            <p class="text-neon-blue font-bold">${user.email}</p>
+                            <p class="text-gray-400 text-sm mt-1">${user.membership} Member</p>
+                        </div>
+                        
+                        <div class="flex flex-col space-y-3">
+                            <a href="index.html" class="btn-primary text-white py-3 rounded-lg font-bold text-center">
+                                Go to Homepage
+                            </a>
+                            <a href="my-bookings.html" class="border border-neon-blue text-neon-blue py-3 rounded-lg font-bold text-center hover:bg-neon-blue/10 transition-colors">
+                                View My Bookings
+                            </a>
+                            <button onclick="logout()" class="border border-gray-500 text-gray-400 py-3 rounded-lg font-bold hover:bg-gray-500/10 transition-colors">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                `;
             }
         }
-    });
-    
-    // Check if already logged in
-    checkAuthStatus();
-});
 
-// Show message function
-function showMessage(message, type) {
-    // Remove existing messages
-    const existingMessage = document.querySelector('.login-message');
-    if (existingMessage) {
-        existingMessage.remove();
-    }
-    
-    // Create new message element
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `login-message p-4 rounded-lg mb-4 text-center ${
-        type === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 
-        'bg-red-500/20 text-red-400 border border-red-500/30'
-    }`;
-    messageDiv.textContent = message;
-    
-    // Insert before the form
-    const form = document.querySelector('form');
-    form.parentNode.insertBefore(messageDiv, form);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (messageDiv.parentNode) {
-            messageDiv.remove();
+        // Logout function
+        function logout() {
+            localStorage.removeItem('currentUser');
+            location.reload();
         }
-    }, 5000);
-}
-
-// Check authentication status
-function checkAuthStatus() {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (user && user.isLoggedIn) {
-        // Show welcome message and redirect option
-        const loginCard = document.querySelector('.login-card');
-        loginCard.innerHTML = `
-            <div class="text-center mb-8">
-                <div class="w-20 h-20 rounded-full bg-gradient-to-r from-green-500 to-green-700 flex items-center justify-center mx-auto mb-4 glow">
-                    <i class="fas fa-check text-white text-2xl"></i>
-                </div>
-                <h1 class="font-orbitron text-3xl mb-2 text-glow">Already Logged In</h1>
-                <p class="text-gray-300">Welcome back, ${user.name}!</p>
-            </div>
-            
-            <div class="space-y-4">
-                <div class="bg-space-purple/50 p-4 rounded-lg text-center">
-                    <p class="text-gray-300 mb-2">You are currently logged in as:</p>
-                    <p class="text-neon-blue font-bold">${user.email}</p>
-                    <p class="text-gray-400 text-sm mt-1">${user.membership} Member</p>
-                </div>
-                
-                <div class="flex flex-col space-y-3">
-                    <a href="index.html" class="btn-primary text-white py-3 rounded-lg font-bold text-center">
-                        Go to Homepage
-                    </a>
-                    <a href="my-bookings.html" class="border border-neon-blue text-neon-blue py-3 rounded-lg font-bold text-center hover:bg-neon-blue/10 transition-colors">
-                        View My Bookings
-                    </a>
-                    <button onclick="logout()" class="border border-gray-500 text-gray-400 py-3 rounded-lg font-bold hover:bg-gray-500/10 transition-colors">
-                        Logout
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-}
-
-// Logout function
-function logout() {
-    localStorage.removeItem('currentUser');
-    location.reload();
-}
     </script>
-    <script src="script.js"></script>
 </body>
 </html>

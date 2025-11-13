@@ -19,6 +19,7 @@ function saveBooking(booking) {
     localStorage.setItem('bookings', JSON.stringify(bookings));
 }
 
+button.disabled = true; 
 
 // Ajouter ce script dans toutes les pages pour gérer l'affichage utilisateur
 function updateNavigationAuth() {
