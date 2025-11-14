@@ -112,10 +112,8 @@
     </style>
 </head>
 <body class="text-white font-exo min-h-screen">
-    <!-- Stars Background -->
     <div id="stars-container"></div>
     
-    <!-- Navigation -->
     <nav class="bg-space-dark/80 backdrop-blur-md border-b border-neon-blue/20 sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
@@ -142,9 +140,7 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="container mx-auto px-4 py-8 relative z-10">
-        <!-- Page Header -->
         <section class="py-8 text-center">
             <h1 class="font-orbitron text-4xl md:text-5xl font-bold mb-4 text-glow">My Bookings</h1>
             <p class="text-xl text-gray-300 max-w-2xl mx-auto">
@@ -152,9 +148,7 @@
             </p>
         </section>
 
-        <!-- Bookings Container -->
         <section class="max-w-6xl mx-auto">
-            <!-- Stats Summary -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="booking-card p-6 text-center">
                     <div class="text-3xl font-bold text-neon-blue mb-2" id="total-bookings">0</div>
@@ -170,12 +164,9 @@
                 </div>
             </div>
 
-            <!-- Bookings List -->
             <div id="bookings-container" class="space-y-6">
-                <!-- Bookings will be loaded here dynamically -->
             </div>
             
-            <!-- No Bookings State -->
             <div id="no-bookings" class="text-center py-16 hidden">
                 <div class="w-32 h-32 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center mx-auto mb-6 glow">
                     <i class="fas fa-rocket text-white text-4xl"></i>
@@ -191,7 +182,6 @@
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-space-dark border-t border-neon-blue/20 py-8 mt-12 relative z-10">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
@@ -221,7 +211,6 @@
     </footer>
 
     <script>
-        // Create stars background
         function createStars() {
             const container = document.getElementById('stars-container');
             const starCount = 150;
@@ -243,7 +232,6 @@
             }
         }
 
-        // Check authentication and load bookings
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
             
@@ -253,13 +241,11 @@
                 return;
             }
             
-            // Display user name
             document.getElementById('user-name').textContent = `Welcome, ${user.name}`;
             
             loadUserBookings(user.id);
         });
 
-        // Load and display user bookings
         function loadUserBookings(userId) {
             const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
             const userBookings = bookings.filter(booking => booking.userId === userId);
@@ -267,7 +253,6 @@
             const container = document.getElementById('bookings-container');
             const noBookings = document.getElementById('no-bookings');
             
-            // Update stats
             updateStats(userBookings);
             
             if (userBookings.length === 0) {
@@ -331,7 +316,6 @@
             `).join('');
         }
 
-        // Update statistics
         function updateStats(bookings) {
             const totalBookings = bookings.length;
             const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
@@ -342,7 +326,6 @@
             document.getElementById('total-spent').textContent = `$${totalSpent.toLocaleString()}`;
         }
 
-        // Helper function to get destination name
         function getDestinationName(destinationId) {
             const destinations = {
                 'moon': 'The Moon',
@@ -354,7 +337,6 @@
             return destinations[destinationId] || destinationId;
         }
 
-        // Calculate total price for a booking
         function calculateTotalPrice(booking) {
             const basePrices = {
                 'moon': 25000,
@@ -370,20 +352,15 @@
             return basePrice * passengerCount;
         }
 
-        // Edit booking function
         function editBooking(bookingId) {
-            // Store the booking ID to edit and redirect to booking page
             localStorage.setItem('editingBookingId', bookingId);
             window.location.href = 'booking.html';
         }
 
-        // View ticket function
         function viewTicket(bookingId) {
             alert(`Ticket for booking ${bookingId} would be displayed here.\nThis would open a printable ticket page.`);
-            // In a real implementation, this would redirect to ticket.html with the booking ID
         }
 
-        // Cancel booking function
         function cancelBooking(bookingId) {
             if (confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) {
                 const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
@@ -396,7 +373,6 @@
                 
                 localStorage.setItem('bookings', JSON.stringify(updatedBookings));
                 
-                // Reload the bookings
                 const user = JSON.parse(localStorage.getItem('currentUser'));
                 loadUserBookings(user.id);
                 
@@ -404,7 +380,6 @@
             }
         }
 
-        // Logout function
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('currentUser');
@@ -412,12 +387,10 @@
             }
         }
 
-        // Check if we're coming from booking page with a new booking
         window.addEventListener('load', function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('booking_success') === 'true') {
                 alert('Booking created successfully!');
-                // Remove the parameter from URL
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
         });
