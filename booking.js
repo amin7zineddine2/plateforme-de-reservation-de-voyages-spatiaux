@@ -1,11 +1,7 @@
-/* --------------------------------------------------------------
-   1. DATA LOADING
-   -------------------------------------------------------------- */
 let destinations = [];
 let accommodations = [];
 let additionalPassengers = [];
 
-// Fake user database for complete user data
 const fakeUsers = [
     {
         id: 1,
@@ -73,11 +69,10 @@ async function loadData() {
         destinations = destRes.destinations || [];
         accommodations = accRes.accommodations || [];
         populateDestinations();
-        renderAccommodations(); // initial render (no destination selected)
-        updatePriceCalculation(); // Initialize price calculation
+        renderAccommodations(); 
+        updatePriceCalculation(); 
     } catch (e) {
         console.error('Failed to load JSON data', e);
-        // Fallback to mock data if files not found
         if (destinations.length === 0 || accommodations.length === 0) {
             console.log('Using fallback data');
             await loadFallbackData();
@@ -85,7 +80,6 @@ async function loadData() {
     }
 }
 
-// Fallback data in case JSON files are not available
 async function loadFallbackData() {
     destinations = [
         {
@@ -133,9 +127,6 @@ async function loadFallbackData() {
     updatePriceCalculation();
 }
 
-/* --------------------------------------------------------------
-   2. POPULATE DESTINATION SELECT
-   -------------------------------------------------------------- */
 function populateDestinations() {
     const select = document.getElementById('destination-select');
     select.innerHTML = '<option value="">Select your destination</option>';
@@ -150,14 +141,10 @@ function populateDestinations() {
     });
 }
 
-/* --------------------------------------------------------------
-   3. RENDER ACCOMMODATION CARDS (filtered by destination)
-   -------------------------------------------------------------- */
 function renderAccommodations(selectedDestId = null) {
     const container = document.getElementById('accommodation-options');
     container.innerHTML = ''; // clear previous cards
 
-    // If a destination is selected → filter accommodations
     let available = accommodations;
     if (selectedDestId) {
         const dest = destinations.find(d => d.id === selectedDestId);
@@ -167,14 +154,12 @@ function renderAccommodations(selectedDestId = null) {
         }
     }
 
-    // Build a card for every available accommodation
     available.forEach(acc => {
         const card = document.createElement('div');
         card.className = 'accommodation-option p-4';
         card.dataset.accommodation = acc.id;
         card.dataset.pricePerDay = acc.pricePerDay;
 
-        // ---- Icon (choose a sensible FontAwesome icon) ----
         let iconClass = 'fa-bed';
         if (acc.id === 'luxury') iconClass = 'fa-crown';
         if (acc.id === 'zero-g') iconClass = 'fa-weightless';
@@ -182,7 +167,6 @@ function renderAccommodations(selectedDestId = null) {
         if (acc.id === 'research') iconClass = 'fa-flask';
         if (acc.id === 'honeymoon') iconClass = 'fa-heart';
 
-        // ---- Gradient colour for the icon circle ----
         let grad = 'from-gray-400 to-gray-600';
         if (acc.category === 'premium' || acc.category === 'luxury') grad = 'from-yellow-400 to-orange-500';
         if (acc.id === 'zero-g') grad = 'from-cyan-400 to-blue-500';
@@ -199,13 +183,9 @@ function renderAccommodations(selectedDestId = null) {
         container.appendChild(card);
     });
 
-    // Re-attach click handlers (they are removed when we clear innerHTML)
     attachAccommodationHandlers();
 }
 
-/* --------------------------------------------------------------
-   4. ADDITIONAL PASSENGERS MANAGEMENT
-   -------------------------------------------------------------- */
 function addAdditionalPassenger() {
     const passengerCount = getTotalPassengerCount();
     const maxPassengers = 6; // Maximum number of passengers allowed
@@ -252,11 +232,9 @@ function addAdditionalPassenger() {
     document.getElementById('additional-passengers').appendChild(passengerForm);
     additionalPassengers.push(passengerId);
     
-    // Update passenger selection
     updatePassengerSelection();
     updatePriceCalculation();
     
-    // Attach remove event listener
     const removeButton = passengerForm.querySelector('.remove-passenger');
     removeButton.addEventListener('click', function() {
         removeAdditionalPassenger(this.dataset.passengerId);
@@ -274,7 +252,7 @@ function removeAdditionalPassenger(passengerId) {
 }
 
 function getTotalPassengerCount() {
-    return 1 + additionalPassengers.length; // Main passenger + additional passengers
+    return 1 + additionalPassengers.length; 
 }
 
 function updatePassengerSelection() {
@@ -286,7 +264,6 @@ function updatePassengerSelection() {
         option.classList.remove('selected');
         option.querySelector('div > div').classList.add('hidden');
         
-        // Auto-select the option that matches the current passenger count
         if (optionPassengers === totalPassengers || 
             (optionPassengers === 4 && totalPassengers >= 3 && totalPassengers <= 6)) {
             option.classList.add('selected');
@@ -295,9 +272,6 @@ function updatePassengerSelection() {
     });
 }
 
-/* --------------------------------------------------------------
-   5. PRICE CALCULATION
-   -------------------------------------------------------------- */
 function updatePriceCalculation() {
     const calculationElement = document.getElementById('price-calculation');
     const destinationSelect = document.getElementById('destination-select');
@@ -308,16 +282,13 @@ function updatePriceCalculation() {
     const totalPassengers = getTotalPassengerCount();
     
     if (destination && accommodationOption) {
-        // Show calculation
         calculationElement.classList.remove('hidden');
         
         const destinationPrice = destinationObj ? destinationObj.price : 0;
         const accommodationPricePerDay = parseInt(accommodationOption.dataset.pricePerDay) || 0;
         
-        // Estimate accommodation cost based on travel duration
         let accommodationDays = 7; // Default to one week
         if (destinationObj && destinationObj.travelDuration) {
-            // Parse duration string to get days
             const durationMatch = destinationObj.travelDuration.match(/(\d+)/);
             if (durationMatch) {
                 accommodationDays = parseInt(durationMatch[1]);
@@ -328,20 +299,15 @@ function updatePriceCalculation() {
         const totalAccommodationCost = accommodationCostPerPassenger * totalPassengers;
         const totalPrice = destinationPrice + totalAccommodationCost;
         
-        // Update calculation display
         document.getElementById('calc-destination').textContent = `$${destinationPrice.toLocaleString()}`;
         document.getElementById('calc-accommodation').textContent = `$${accommodationCostPerPassenger.toLocaleString()}`;
         document.getElementById('calc-passengers').textContent = totalPassengers;
         document.getElementById('calc-total').textContent = `$${totalPrice.toLocaleString()}`;
     } else {
-        // Hide calculation if not all required fields are filled
         calculationElement.classList.add('hidden');
     }
 }
 
-/* --------------------------------------------------------------
-   6. EVENT LISTENERS
-   -------------------------------------------------------------- */
 function attachAccommodationHandlers() {
     document.querySelectorAll('.accommodation-option').forEach(opt => {
         opt.addEventListener('click', function() {
@@ -352,18 +318,12 @@ function attachAccommodationHandlers() {
     });
 }
 
-/* --------------------------------------------------------------
-   7. DESTINATION CHANGE → FILTER ACCOMMODATIONS
-   -------------------------------------------------------------- */
 document.getElementById('destination-select').addEventListener('change', function(e) {
     const destId = e.target.value;
     renderAccommodations(destId);
     updatePriceCalculation();
 });
 
-/* --------------------------------------------------------------
-   8. ORIGINAL STARFIELD
-   -------------------------------------------------------------- */
 function createStars() {
     const container = document.getElementById('stars-container');
     const starCount = 150;
@@ -380,17 +340,12 @@ function createStars() {
     }
 }
 
-/* --------------------------------------------------------------
-   9. FORM INTERACTIONS
-   -------------------------------------------------------------- */
 function setupFormInteractions() {
-    // ---- Passenger selection ----
     document.querySelectorAll('.passenger-option').forEach(opt => {
         opt.addEventListener('click', function() {
             const selectedPassengers = parseInt(this.dataset.passengers);
             const currentPassengers = getTotalPassengerCount();
             
-            // Only allow selection if it matches current passenger count
             if (selectedPassengers === currentPassengers || 
                 (selectedPassengers === 4 && currentPassengers >= 3 && currentPassengers <= 6)) {
                 document.querySelectorAll('.passenger-option').forEach(o => {
@@ -400,7 +355,6 @@ function setupFormInteractions() {
                 this.classList.add('selected');
                 this.querySelector('div > div').classList.remove('hidden');
             } else {
-                // Show message about adding/removing passengers
                 if (selectedPassengers > currentPassengers) {
                     alert(`Please add ${selectedPassengers - currentPassengers} more passenger(s) to select this option.`);
                 } else {
@@ -410,13 +364,10 @@ function setupFormInteractions() {
         });
     });
 
-    // ---- Add passenger button ----
     document.getElementById('add-passenger').addEventListener('click', addAdditionalPassenger);
 
-    // ---- Form field changes ----
     document.getElementById('departure-date').addEventListener('change', updatePriceCalculation);
 
-    // ---- Form submit ----
     document.getElementById('booking-form').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -434,7 +385,6 @@ function setupFormInteractions() {
             return;
         }
 
-        // Validate additional passengers
         const additionalPassengerForms = document.querySelectorAll('#additional-passengers .passenger-form');
         let allPassengersValid = true;
         
@@ -459,7 +409,6 @@ function setupFormInteractions() {
         const destInfo = destinations.find(d => d.id === selectedDest) || {};
         const accInfo = accommodations.find(a => a.id === document.querySelector('.accommodation-option.selected')?.dataset.accommodation) || {};
 
-        // Collect additional passenger data
         const additionalPassengerData = [];
         additionalPassengerForms.forEach((form, index) => {
             additionalPassengerData.push({
@@ -528,36 +477,29 @@ function saveBooking(booking) {
     localStorage.setItem('bookings', JSON.stringify(bookings));
 }
 
-/* --------------------------------------------------------------
-   10. PAGE INITIALISATION - VERSION CORRIGÉE
-   -------------------------------------------------------------- */
+
 document.addEventListener('DOMContentLoaded', async() => {
     createStars();
     await loadData();
     setupFormInteractions();
     
-    // Pre-fill logged-in user data and make fields read-only
     prefillUserData();
 });
 
-// NOUVELLE FONCTION pour pré-remplir les données utilisateur
 function prefillUserData() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (user) {
         console.log('User found in localStorage:', user);
         
-        // Récupérer les données complètes depuis fakeUsers
         const completeUserData = fakeUsers.find(u => u.id === user.id) || user;
         console.log('Complete user data:', completeUserData);
         
-        // Remplir les champs avec les données utilisateur
         const firstNameField = document.getElementById('first-name');
         const lastNameField = document.getElementById('last-name');
         const emailField = document.getElementById('email');
         const phoneField = document.getElementById('phone');
         
         if (firstNameField) {
-            // CORRECTION: Utiliser firstName d'abord, puis name si firstName n'existe pas
             firstNameField.value = completeUserData.firstName || completeUserData.name || '';
             firstNameField.disabled = true;
             console.log('First name set to:', firstNameField.value);
@@ -576,13 +518,11 @@ function prefillUserData() {
         }
         
         if (phoneField) {
-            // CORRECTION: S'assurer que le numéro de téléphone est bien rempli
             phoneField.value = completeUserData.phone || '';
             phoneField.disabled = true;
             console.log('Phone set to:', phoneField.value);
         }
         
-        // Vérifier que les champs sont bien remplis
         console.log('Fields filled:', {
             firstName: firstNameField?.value,
             lastName: lastNameField?.value,
