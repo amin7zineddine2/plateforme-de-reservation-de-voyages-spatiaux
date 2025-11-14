@@ -438,18 +438,18 @@ function setupFormInteractions() {
             },
             additionalPassengers: additionalPassengerData,
             specialRequirements: document.getElementById('special-requirements').value,
-            totalPrice: calculateTotalPrice(),
+            totalPrice: calculTotal(),
             status: 'confirmed',
             createdAt: new Date().toISOString()
         };
 
-        saveBooking(bookingData);
+        save(bookingData);
         alert('Booking confirmed successfully!');
         window.location.href = 'my-bookings.html';
     });
 }
 
-function calculateTotalPrice() {
+function calculTotal() {
     const destinationSelect = document.getElementById('destination-select');
     const accommodationOption = document.querySelector('.accommodation-option.selected');
     const destinationObj = destinations.find(d => d.id === destinationSelect.value);
@@ -471,7 +471,7 @@ function calculateTotalPrice() {
     return destinationPrice + (accommodationPricePerDay * accommodationDays * totalPassengers);
 }
 
-function saveBooking(booking) {
+function save(booking) {
     let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
     bookings.push(booking);
     localStorage.setItem('bookings', JSON.stringify(bookings));
