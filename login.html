@@ -5,11 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SpaceVoyager</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -263,7 +260,6 @@
     </footer>
 
     <script>
-        // Create stars background
         function createStars() {
             const container = document.getElementById('stars-container');
             const starCount = 150;
@@ -285,7 +281,6 @@
             }
         }
 
-        // Fake user database - STRICT CHECK
         const fakeUsers = [
             {
                 id: 1,
@@ -344,7 +339,6 @@
             }
         ];
 
-        // Show signup information - CORRIGÉE
         function showSignupInfo() {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'login-message p-4 rounded-lg mb-4 bg-blue-500/20 text-blue-400 border border-blue-500/30';
@@ -380,17 +374,14 @@
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
 
-                // Validate inputs
                 if (!email || !password) {
                     showMessage('Please fill in all fields', 'error');
                     return;
                 }
 
-                // STRICT CHECK: Verify user exists in fake database
                 const user = fakeUsers.find(u => u.email === email && u.password === password);
 
                 if (user) {
-                    // User exists and credentials are correct - login successful
                     const userSession = {
                         id: user.id,
                         email: user.email,
@@ -401,40 +392,33 @@
                         loginTime: new Date().toISOString()
                     };
 
-                    // Save to localStorage
                     localStorage.setItem('currentUser', JSON.stringify(userSession));
 
                     showMessage(`Welcome back, ${user.name}!`, 'success');
 
-                    // Redirect after short delay
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 1500);
 
                 } else {
-                    // STRICT CHECK: Check if email exists but password is wrong
                     const emailExists = fakeUsers.some(u => u.email === email);
 
                     if (emailExists) {
                         showMessage('Incorrect password. Please try again.', 'error');
                     } else {
-                        // Email not found in fake users - STRICT: No automatic account creation
                         showMessage('Account not found. Please sign up first.', 'error');
                     }
                 }
             });
 
-            // Show signup info when clicked
             document.getElementById('showSignup').addEventListener('click', function (e) {
                 e.preventDefault();
                 showSignupInfo();
             });
 
-            // Check if already logged in
             checkAuthStatus();
         });
 
-        // Show signup information
         function showSignupInfo() {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'login-message p-4 rounded-lg mb-4 bg-blue-500/20 text-blue-400 border border-blue-500/30';
@@ -457,26 +441,21 @@
             form.parentNode.insertBefore(messageDiv, form);
         }
 
-        // Show message function
         function showMessage(message, type) {
-            // Remove existing messages
             const existingMessage = document.querySelector('.login-message');
             if (existingMessage) {
                 existingMessage.remove();
             }
 
-            // Create new message element
             const messageDiv = document.createElement('div');
             messageDiv.className = `login-message p-4 rounded-lg mb-4 text-center ${type === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
                 'bg-red-500/20 text-red-400 border border-red-500/30'
                 }`;
             messageDiv.textContent = message;
 
-            // Insert before the form
             const form = document.querySelector('form');
             form.parentNode.insertBefore(messageDiv, form);
 
-            // Auto remove after 5 seconds
             setTimeout(() => {
                 if (messageDiv.parentNode) {
                     messageDiv.remove();
@@ -484,11 +463,9 @@
             }, 5000);
         }
 
-        // Check authentication status
         function checkAuthStatus() {
             const user = JSON.parse(localStorage.getItem('currentUser'));
             if (user && user.isLoggedIn) {
-                // Show welcome message and redirect option
                 const loginCard = document.querySelector('.login-card');
                 loginCard.innerHTML = `
                     <div class="text-center mb-8">
@@ -522,7 +499,6 @@
             }
         }
 
-        // Logout function
         function logout() {
             localStorage.removeItem('currentUser');
             location.reload();
