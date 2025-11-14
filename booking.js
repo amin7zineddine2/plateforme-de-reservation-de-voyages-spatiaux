@@ -143,7 +143,7 @@ function populateDestinations() {
 
 function renderAccommodations(selectedDestId = null) {
     const container = document.getElementById('accommodation-options');
-    container.innerHTML = ''; // clear previous cards
+    container.innerHTML = ''; 
 
     let available = accommodations;
     if (selectedDestId) {
