@@ -5,6 +5,65 @@ let destinations = [];
 let accommodations = [];
 let additionalPassengers = [];
 
+// Fake user database for complete user data
+const fakeUsers = [
+    {
+        id: 1,
+        name: "zineddine mohamed amine",
+        firstName: "mohamed-amine",
+        lastName: "zineddine",
+        email: "amin@gmail.com",
+        phone: "+212 7 71 04 00 04",
+        password: 'amin',
+        joinDate: "2023-01-15",
+        membership: "Premium"
+    },
+    {
+        id: 2,
+        name: "Sophie Martin",
+        firstName: "Sophie",
+        lastName: "Martin",
+        email: "sophie.martin@email.com",
+        phone: "+33 1 34 56 78 90",
+        password: 'amin',
+        joinDate: "2023-02-20",
+        membership: "Standard"
+    },
+    {
+        id: 3,
+        name: "Thomas Leroy",
+        firstName: "Thomas",
+        lastName: "Leroy",
+        email: "thomas.leroy@email.com",
+        phone: "+33 1 45 67 89 01",
+        password: 'amin',
+        joinDate: "2023-03-10",
+        membership: "Premium"
+    },
+    {
+        id: 4,
+        name: "Marie Lambert",
+        firstName: "Marie",
+        lastName: "Lambert",
+        email: "marie.lambert@email.com",
+        phone: "+33 1 56 78 90 12",
+        password: 'amin',
+        joinDate: "2023-04-05",
+        membership: "Standard"
+    },
+    {
+        id: 5,
+        name: "Jean Moreau",
+        firstName: "Jean",
+        lastName: "Moreau",
+        email: "jean.moreau@email.com",
+        phone: "+33 1 67 89 01 23",
+        password: 'amin',
+        joinDate: "2023-05-12",
+        membership: "VIP"
+    }
+];
+
 async function loadData() {
     try {
         const [destRes, accRes] = await Promise.all([
@@ -470,7 +529,7 @@ function saveBooking(booking) {
 }
 
 /* --------------------------------------------------------------
-   10. PAGE INITIALISATION
+   10. PAGE INITIALISATION - VERSION CORRIGÉE
    -------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', async() => {
     createStars();
@@ -478,17 +537,59 @@ document.addEventListener('DOMContentLoaded', async() => {
     setupFormInteractions();
     
     // Pre-fill logged-in user data and make fields read-only
+    prefillUserData();
+});
+
+// NOUVELLE FONCTION pour pré-remplir les données utilisateur
+function prefillUserData() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (user) {
-        document.getElementById('first-name').value = user.firstName || user.name || '';
-        document.getElementById('last-name').value = user.lastName || '';
-        document.getElementById('email').value = user.email || '';
-        document.getElementById('phone').value = user.phone || '';
+        console.log('User found in localStorage:', user);
         
-        // Make fields disabled (read-only)
-        document.getElementById('first-name').disabled = true;
-        document.getElementById('last-name').disabled = true;
-        document.getElementById('email').disabled = true;
-        document.getElementById('phone').disabled = true;
+        // Récupérer les données complètes depuis fakeUsers
+        const completeUserData = fakeUsers.find(u => u.id === user.id) || user;
+        console.log('Complete user data:', completeUserData);
+        
+        // Remplir les champs avec les données utilisateur
+        const firstNameField = document.getElementById('first-name');
+        const lastNameField = document.getElementById('last-name');
+        const emailField = document.getElementById('email');
+        const phoneField = document.getElementById('phone');
+        
+        if (firstNameField) {
+            // CORRECTION: Utiliser firstName d'abord, puis name si firstName n'existe pas
+            firstNameField.value = completeUserData.firstName || completeUserData.name || '';
+            firstNameField.disabled = true;
+            console.log('First name set to:', firstNameField.value);
+        }
+        
+        if (lastNameField) {
+            lastNameField.value = completeUserData.lastName || '';
+            lastNameField.disabled = true;
+            console.log('Last name set to:', lastNameField.value);
+        }
+        
+        if (emailField) {
+            emailField.value = completeUserData.email || '';
+            emailField.disabled = true;
+            console.log('Email set to:', emailField.value);
+        }
+        
+        if (phoneField) {
+            // CORRECTION: S'assurer que le numéro de téléphone est bien rempli
+            phoneField.value = completeUserData.phone || '';
+            phoneField.disabled = true;
+            console.log('Phone set to:', phoneField.value);
+        }
+        
+        // Vérifier que les champs sont bien remplis
+        console.log('Fields filled:', {
+            firstName: firstNameField?.value,
+            lastName: lastNameField?.value,
+            email: emailField?.value,
+            phone: phoneField?.value
+        });
+    } else {
+        console.log('No user logged in');
     }
-});
+}
