@@ -74,6 +74,12 @@
             outline: none;
         }
         
+        .form-input:disabled {
+            background: rgba(22, 33, 62, 0.3);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+        }
+        
         .nav-link {
             position: relative;
         }
@@ -137,6 +143,38 @@
             border-color: #0ea5e9;
             background: rgba(14, 165, 233, 0.1);
         }
+        
+        .price-display {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #0ea5e9;
+        }
+        
+        .journey-summary {
+            background: rgba(22, 33, 62, 0.5);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+        
+        .passenger-form {
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: rgba(26, 26, 46, 0.5);
+        }
+        
+        .remove-passenger {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #ef4444;
+        }
+        
+        .remove-passenger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
     </style>
 </head>
 <body class="text-white font-exo min-h-screen">
@@ -190,20 +228,16 @@
                         <!-- Destination -->
                         <div class="mb-6">
                             <label class="block text-gray-300 mb-3 text-lg">Destination</label>
-                            <select class="form-input w-full px-4 py-3 text-lg">
+                            <select id="destination-select" class="form-input w-full px-4 py-3 text-lg">
                                 <option value="">Select your destination</option>
-                                <option value="moon">The Moon - $25,000</option>
-                                <option value="mars">Mars - $150,000</option>
-                                <option value="orbital">Orbital Station - $50,000</option>
-                                <option value="europa">Europa - $450,000</option>
-                                <option value="titan">Titan - $600,000</option>
+                                <!-- Options will be populated by JavaScript -->
                             </select>
                         </div>
                         
                         <!-- Departure Date -->
                         <div class="mb-6">
                             <label class="block text-gray-300 mb-3 text-lg">Departure Date</label>
-                            <input type="date" class="form-input w-full px-4 py-3 text-lg">
+                            <input type="date" id="departure-date" class="form-input w-full px-4 py-3 text-lg">
                         </div>
                         
                         <!-- Number of Passengers -->
@@ -235,68 +269,78 @@
                     <!-- Accommodation Type -->
                     <div>
                         <h2 class="font-orbitron text-2xl mb-6 text-glow">Accommodation Type</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <!-- Standard Cabin -->
-                            <div class="accommodation-option p-4" data-accommodation="standard">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gray-400 to-gray-600 mb-3 flex items-center justify-center mx-auto">
-                                    <i class="fas fa-bed text-white"></i>
-                                </div>
-                                <h3 class="font-orbitron text-lg mb-2 text-center">Standard Cabin</h3>
-                                <p class="text-gray-300 text-sm text-center">Comfortable private quarters with basic amenities</p>
-                            </div>
-                            
-                            <!-- Luxury Suite -->
-                            <div class="accommodation-option p-4" data-accommodation="luxury">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 mb-3 flex items-center justify-center mx-auto">
-                                    <i class="fas fa-crown text-white"></i>
-                                </div>
-                                <h3 class="font-orbitron text-lg mb-2 text-center">Luxury Suite</h3>
-                                <p class="text-gray-300 text-sm text-center">Spacious suite with premium amenities and viewports</p>
-                            </div>
-                            
-                            <!-- Zero-G Pod -->
-                            <div class="accommodation-option p-4" data-accommodation="zero-g">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 mb-3 flex items-center justify-center mx-auto">
-                                    <i class="fas fa-weightless text-white"></i>
-                                </div>
-                                <h3 class="font-orbitron text-lg mb-2 text-center">Zero-G Pod</h3>
-                                <p class="text-gray-300 text-sm text-center">Advanced accommodation with zero-gravity experience</p>
-                            </div>
+                        <div id="accommodation-options" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Options will be populated by JavaScript -->
                         </div>
                     </div>
 
                     <!-- Personal Information -->
                     <div>
-                        <h2 class="font-orbitron text-2xl mb-6 text-glow">Personal Information</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <div>
-                                <label class="block text-gray-300 mb-2">First Name</label>
-                                <input type="text" placeholder="Enter your first name" class="form-input w-full px-4 py-3">
-                            </div>
-                            <div>
-                                <label class="block text-gray-300 mb-2">Last Name</label>
-                                <input type="text" placeholder="Enter your last name" class="form-input w-full px-4 py-3">
-                            </div>
-                            <div>
-                                <label class="block text-gray-300 mb-2">Email Address</label>
-                                <input type="email" placeholder="Enter your email" class="form-input w-full px-4 py-3">
-                            </div>
-                            <div>
-                                <label class="block text-gray-300 mb-2">Phone Number</label>
-                                <input type="tel" placeholder="Enter your phone number" class="form-input w-full px-4 py-3">
+                        <h2 class="font-orbitron text-2xl mb-6 text-glow">Passenger Information</h2>
+                        
+                        <!-- Main Passenger (User) -->
+                        <div class="passenger-form">
+                            <h3 class="font-orbitron text-lg mb-4 text-neon-blue">Main Passenger (You)</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div>
+                                    <label class="block text-gray-300 mb-2">First Name</label>
+                                    <input type="text" id="first-name" placeholder="Enter your first name" class="form-input w-full px-4 py-3" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Last Name</label>
+                                    <input type="text" id="last-name" placeholder="Enter your last name" class="form-input w-full px-4 py-3" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Email Address</label>
+                                    <input type="email" id="email" placeholder="Enter your email" class="form-input w-full px-4 py-3" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Phone Number</label>
+                                    <input type="tel" id="phone" placeholder="Enter your phone number" class="form-input w-full px-4 py-3" disabled>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Special Requirements -->
-                        <div class="mb-6">
-                            <label class="block text-gray-300 mb-2">Special Requirements</label>
-                            <textarea placeholder="Any special requirements or notes..." class="form-input w-full px-4 py-3 h-24 resize-none"></textarea>
+                        <!-- Additional Passengers Container -->
+                        <div id="additional-passengers">
+                            <!-- Additional passengers will be added here dynamically -->
                         </div>
                         
                         <!-- Add Passenger Button -->
-                        <button type="button" class="border border-neon-blue text-neon-blue px-6 py-3 rounded-lg font-bold hover:bg-neon-blue/10 transition-colors w-full md:w-auto">
+                        <button type="button" id="add-passenger" class="border border-neon-blue text-neon-blue px-6 py-3 rounded-lg font-bold hover:bg-neon-blue/10 transition-colors w-full md:w-auto">
                             <i class="fas fa-plus mr-2"></i>Add Passenger
                         </button>
+                    </div>
+
+                    <!-- Special Requirements -->
+                    <div>
+                        <h2 class="font-orbitron text-2xl mb-6 text-glow">Special Requirements</h2>
+                        <textarea id="special-requirements" placeholder="Any special requirements or notes..." class="form-input w-full px-4 py-3 h-24 resize-none"></textarea>
+                    </div>
+
+                    <!-- Price Calculation -->
+                    <div id="price-calculation" class="journey-summary hidden">
+                        <h3 class="font-orbitron text-xl mb-4 text-glow">Price Calculation</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Destination Price:</span>
+                                <span id="calc-destination" class="text-white">$0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Accommodation (per passenger):</span>
+                                <span id="calc-accommodation" class="text-white">$0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Number of Passengers:</span>
+                                <span id="calc-passengers" class="text-white">1</span>
+                            </div>
+                            <div class="border-t border-neon-blue/20 pt-3 mt-3">
+                                <div class="flex justify-between text-lg font-bold">
+                                    <span class="text-gray-300">Total Price:</span>
+                                    <span id="calc-total" class="text-neon-blue">$0</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Confirm Booking Section -->
@@ -346,134 +390,7 @@
         </div>
     </footer>
 
-    <script>
-
-        function createStars() {
-            const container = document.getElementById('stars-container');
-            const starCount = 150;
-            
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-                
-                const size = Math.random() * 2 + 1;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                
-                star.style.animationDelay = `${Math.random() * 5}s`;
-                
-                container.appendChild(star);
-            }
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            createStars();
-            setupFormInteractions();
-        });
-
-        // Setup form interactions
-        function setupFormInteractions() {
-            // Passenger selection
-            const passengerOptions = document.querySelectorAll('.passenger-option');
-            passengerOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remove selected class from all options
-                    passengerOptions.forEach(opt => {
-                        opt.classList.remove('selected');
-                        opt.querySelector('div > div').classList.add('hidden');
-                    });
-                    
-                    // Add selected class to clicked option
-                    this.classList.add('selected');
-                    this.querySelector('div > div').classList.remove('hidden');
-                });
-            });
-
-            // Accommodation selection
-            const accommodationOptions = document.querySelectorAll('.accommodation-option');
-            accommodationOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // Remove selected class from all options
-                    accommodationOptions.forEach(opt => {
-                        opt.classList.remove('selected');
-                    });
-                    
-                    // Add selected class to clicked option
-                    this.classList.add('selected');
-                });
-            });
-
-            // Add passenger button
-            document.querySelector('button[type="button"]').addEventListener('click', function() {
-                alert('Additional passenger fields would be added here dynamically.');
-            });
-
-            // Form submission
-            document.getElementById('booking-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Basic validation
-                const termsChecked = document.getElementById('terms').checked;
-                if (!termsChecked) {
-                    alert('Please agree to the Terms of Service and Space Travel Agreement.');
-                    return;
-                }
-                
-                // Check if user is logged in
-                const user = JSON.parse(localStorage.getItem('currentUser'));
-                if (!user) {
-                    if (confirm('You need to be logged in to complete your booking. Would you like to login first?')) {
-                        window.location.href = 'login.html';
-                    }
-                    return;
-                }
-                
-                // Create booking
-                const bookingData = {
-                    id: 'BK' + Date.now(),
-                    userId: user.id,
-                    destination: document.querySelector('select').value,
-                    departureDate: document.querySelector('input[type="date"]').value,
-                    passengerCount: document.querySelector('.passenger-option.selected')?.getAttribute('data-passengers') || '1',
-                    accommodation: document.querySelector('.accommodation-option.selected')?.getAttribute('data-accommodation') || 'standard',
-                    firstName: document.querySelector('input[type="text"]').value,
-                    lastName: document.querySelectorAll('input[type="text"]')[1].value,
-                    email: document.querySelector('input[type="email"]').value,
-                    phone: document.querySelector('input[type="tel"]').value,
-                    specialRequirements: document.querySelector('textarea').value,
-                    status: 'confirmed',
-                    createdAt: new Date().toISOString()
-                };
-                
-                // Save booking
-                saveBooking(bookingData);
-                
-                alert('Booking confirmed successfully!');
-                window.location.href = 'my-bookings.html';
-            });
-        }
-
-        // Save booking to localStorage
-        function saveBooking(booking) {
-            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            bookings.push(booking);
-            localStorage.setItem('bookings', JSON.stringify(bookings));
-        }
-
-        // Check authentication status and update UI
-        function checkAuthStatus() {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
-            if (user && user.isLoggedIn) {
-                // Pre-fill user information if available
-                document.querySelector('input[type="text"]').value = user.name || '';
-                document.querySelector('input[type="email"]').value = user.email || '';
-            }
-        }
-    </script>
+    <script src="booking.js"></script>
     <script src="script.js"></script>
 
 </body>
